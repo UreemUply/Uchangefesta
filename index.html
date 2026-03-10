@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유플러스 체인지 페스타 혜택 진단</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* LG U+ 공식 홈페이지 스타일 (모던 & 마젠타 포인트) */
+        :root {
+            --uplus-pink: #e6007e;
+            --uplus-dark: #222222;
+            --uplus-gray: #f5f6f8;
+            --uplus-border: #e0e0e0;
+        }
+
+        body { 
+            background-color: var(--uplus-gray); 
+            font-family: 'Noto Sans KR', sans-serif; 
+            padding: 20px 10px; 
+            margin: 0; 
+            color: var(--uplus-dark);
+        }
+        
+        .container { 
+            max-width: 650px; 
+            margin: auto; 
+            background-color: #ffffff; 
+            border-radius: 16px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05); 
+            overflow: hidden;
+        }
+
+        /* 헤더 영역 */
+        .header {
+            text-align: center;
+            padding: 30px 20px 10px;
+        }
+        .header h1 { 
+            font-size: 26px; 
+            font-weight: 700; 
+            margin: 0 0 10px 0; 
+            color: var(--uplus-dark);
+            letter-spacing: -0.5px;
+        }
+        .header p {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.5;
+            word-break: keep-all;
+            margin: 0 10px;
+        }
+
+        /* 혜택 강조 배너 */
+        .highlight-banner {
+            background-color: #fff0f5;
+            color: var(--uplus-pink);
+            padding: 15px 20px;
+            margin: 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 1.4;
+            border: 1px solid #ffd1e3;
+            word-break: keep-all;
+        }
+        .highlight-banner span {
+            display: block;
+            font-size: 13px;
+            color: #555;
+            font-weight: 400;
+            margin-bottom: 5px;
+        }
+
+        /* 폼 영역 */
+        form { padding: 0 20px 20px; }
+        .question { margin-bottom: 24px; }
+        .question h3 { 
+            font-size: 16px; 
+            font-weight: 700; 
+            margin-bottom: 8px; 
+            color: var(--uplus-dark);
+            line-height: 1.4;
+        }
+        .question .desc {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 12px;
+            display: block;
+        }
+        
+        /* 라디오/체크박스 버튼 디자인 */
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        label { 
+            display: flex;
+            align-items: center;
+            padding: 12px 16px; 
+            background: #ffffff; 
+            border: 1px solid var(--uplus-border); 
+            border-radius: 8px; 
+            font-size: 14px; 
+            cursor: pointer; 
+            transition: all 0.2s;
+            line-height: 1.4;
+        }
+        label:hover { border-color: var(--uplus-pink); }
+        input[type="radio"], input[type="checkbox"] { 
+            accent-color: var(--uplus-pink);
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+        input[type="text"], textarea { 
+            width: 100%; 
+            padding: 14px 16px; 
+            border: 1px solid var(--uplus-border); 
+            border-radius: 8px; 
+            font-size: 14px; 
+            box-sizing: border-box;
+            font-family: 'Noto Sans KR', sans-serif;
+            resize: vertical;
+        }
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: var(--uplus-pink);
+        }
+
+        /* 제출 버튼 */
+        .submit-btn { 
+            background-color: var(--uplus-pink); 
+            color: #ffffff; 
+            font-size: 18px; 
+            font-weight: 700; 
+            border: none; 
+            border-radius: 8px; 
+            padding: 16px; 
+            width: 100%; 
+            cursor: pointer; 
+            margin-top: 10px; 
+            transition: background-color 0.2s;
+        }
+        .submit-btn:hover { background-color: #cc006f; }
+        
+        /* 매니저 전용 토글 */
+        .admin-toggle { text-align: center; margin: 30px 0 10px; }
+        .admin-toggle button { background: none; border: none; color: #aaa; cursor: pointer; font-size: 13px; text-decoration: underline; }
+        
+        /* 관리자 뷰 스타일 */
+        #adminView { display: none; padding: 20px; }
+        #adminView h2 { color: var(--uplus-dark); text-align: center; font-size: 22px; margin-bottom: 20px; }
+        
+        .table-container { overflow-x: auto; margin-top: 15px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; white-space: nowrap; }
+        th, td { border: 1px solid var(--uplus-border); padding: 10px 8px; text-align: center; }
+        th { background-color: var(--uplus-gray); color: var(--uplus-dark); font-weight: 700; position: sticky; top: 0; }
+        tr:nth-child(even) { background-color: #fafafa; }
+        .highlight { color: var(--uplus-pink); font-weight: bold; }
+        
+        .admin-controls { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 25px; }
+        .admin-controls button { padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; flex: 1; min-width: 100px; }
+        .btn-back { background-color: #555; color: white; }
+        .btn-download { background-color: #107c41; color: white; }
+        .btn-clear { background-color: #e74c3c; color: white; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <div id="customerView">
+        <div class="header">
+            <h1>[유체페 방문 이벤트]<br>내 안에 잠든 50만 원을 찾아라! 💰</h1>
+            <p>유플러스 매장에 오신 것을 환영합니다! 🎉<br>지금 매장에서는 <strong>'유플러스 체인지 페스타'</strong>가 한창 진행 중입니다. 딱 1분만 투자해서 아래 질문에 답해보세요. 나도 몰랐던 추가 50만 원의 숨은 지원금을 우리 매니저가 쏙쏙 찾아드립니다!</p>
+        </div>
+
+        <div class="highlight-banner">
+            <span>대상자 특별 프로모션</span>
+            청주 일반산단, 테크노폴리스산단 내에<br>
+            기업체 근무하신다면 추가 50만원 할인 받기!
+        </div>
+        
+        <form id="surveyForm">
+            <div class="question">
+                <h3>Q1. 고객님의 성함(또는 휴대폰 뒷자리 4자리)을 적어주세요.</h3>
+                <input type="text" id="q1" placeholder="입력란" required>
+            </div>
+
+            <div class="question">
+                <h3>Q2. 현재 고객님의 휴대폰 통신사는 어디이신가요?</h3>
+                
+                <div class="radio-group">
+                    <label><input type="radio" name="q2" value="SKT" required> SKT</label>
+                    <label><input type="radio" name="q2" value="KT"> KT</label>
+                    <label><input type="radio" name="q2" value="알뜰폰"> 알뜰폰</label>
+                    <label><input type="radio" name="q2" value="LG U+"> LG U+ (기기변경/가족결합 혜택을 찾아드릴게요!)</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>Q3. 댁에서 이용 중이신 인터넷/TV 통신사는 어디이신가요?</h3>
+                <div class="radio-group">
+                    <label><input type="radio" name="q3" value="SKT" required> SKT (SK브로드밴드)</label>
+                    <label><input type="radio" name="q3" value="KT"> KT</label>
+                    <label><input type="radio" name="q3" value="지역케이블"> 지역 케이블 (HCN 등)</label>
+                    <label><input type="radio" name="q3" value="LG U+"> LG U+</label>
+                    <label><input type="radio" name="q3" value="미사용"> 인터넷/TV를 사용하지 않음</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>Q4. 고객님을 포함한 가족 구성원 수는?</h3>
+                <span class="desc">가족 결합 할인 설계를 위한 문항입니다.</span>
+                <div class="radio-group">
+                    <label><input type="radio" name="q_family" value="1인" required> 1인</label>
+                    <label><input type="radio" name="q_family" value="2인"> 2인</label>
+                    <label><input type="radio" name="q_family" value="3인"> 3인</label>
+                    <label><input type="radio" name="q_family" value="4인"> 4인</label>
+                    <label><input type="radio" name="q_family" value="5인 이상"> 5인 이상</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>Q5. 오늘 매장에는 어떤 설레는 일로 방문해주셨나요? (중복선택 가능)</h3>
+                <div class="radio-group">
+                    <label><input type="checkbox" name="q5" value="휴대폰 변경"> 최신 휴대폰으로 바꾸고 싶어서📱</label>
+                    <label><input type="checkbox" name="q5" value="인터넷/TV 변경"> 우리 집 인터넷/TV를 바꿔볼까 하고📺</label>
+                    <label><input type="checkbox" name="q5" value="업무처리"> 요금제 변경이나 기타 업무 처리하러</label>
+                    <label><input type="checkbox" name="q5" value="단순구경"> 지나가다 혜택이 궁금해서 구경하러👀</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>Q6. 🚨[핵심 진단 1] 혹시 청주(일반/테크노폴리스) 또는 대전(대화/신탄진)에 있는 기업에 근무하시나요?</h3>
+                <span class="desc">특판 대상자 즉시 확인용</span>
+                <div class="radio-group">
+                    <label><input type="radio" name="q6" value="네(본인)" required> 네, 해당 지역에서 일하고 있습니다! (최대 혜택 후보🎉)</label>
+                    <label><input type="radio" name="q6" value="아니요"> 아니요, 다른 지역에서 일합니다.</label>
+                    <label><input type="radio" name="q6" value="모름"> 잘 모르겠습니다. (매니저가 주소로 확인해 드릴게요!)</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>Q7. 🚨[핵심 진단 2] 본인이 아니시더라도, '직계 가족' 중에 위 산업단지에 근무하시는 분이 있나요?</h3>
+                
+                <div class="radio-group">
+                    <label><input type="radio" name="q7" value="네(가족)" required> 네! 가족 중에 있습니다.</label>
+                    <label><input type="radio" name="q7" value="없음"> 없는 것 같습니다.</label>
+                    <label><input type="radio" name="q7" value="확인필요"> 확인해 봐야 알 것 같아요.</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>Q8. 위 산업단지 기업과 거래하는 '협력업체'에 종사하셔도 혜택이 적용된다는 사실, 알고 계셨나요?</h3>
+                
+                <div class="radio-group">
+                    <label><input type="radio" name="q8" value="몰랐음(확인요청)" required> 몰랐어요! 우리 회사도 협력업체인지 확인해 주세요.</label>
+                    <label><input type="radio" name="q8" value="알고있음"> 알고 있었어요.</label>
+                    <label><input type="radio" name="q8" value="해당없음"> 해당 사항이 없습니다.</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>Q9. 오늘 담당 매니저에게 어떤 스타일의 상담을 받고 싶으신가요?</h3>
+                
+                <div class="radio-group">
+                    <label><input type="radio" name="q9" value="스피드" required> 핵심만 콕콕! 결론부터 말해주는 '스피드 상담' ⚡</label>
+                    <label><input type="radio" name="q9" value="꼼꼼분석"> 요금제 하나하나 비교해 주는 '꼼꼼 분석 상담' 🧐</label>
+                    <label><input type="radio" name="q9" value="풀케어"> 위약금부터 결합할인까지 전부 알아서 해주는 '풀케어 컨설팅' 👑</label>
+                </div>
+            </div>
+
+            <div class="question">
+                <h3>Q10. 마지막으로, 상담 전 매니저가 미리 알아두면 좋은 점이나 궁금한 점을 자유롭게 적어주세요.</h3>
+                <span class="desc">(선택 항목) 예: 갤럭시S26 재고 있나요?</span>
+                <textarea id="q10" rows="3" placeholder="자유롭게 적어주세요."></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">할인 혜택 확인하기</button>
+        </form>
+
+        <div class="admin-toggle">
+            <button onclick="toggleView('admin')">매니저 전용 페이지</button>
+        </div>
+    </div>
+
+    <div id="adminView">
+        <h2>상담 대기 고객 현황</h2>
+        
+        <div class="table-container">
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        <th>고객명(번호)</th>
+                        <th>모바일</th>
+                        <th>인터넷/TV</th>
+                        <th>가족수</th>
+                        <th>방문목적</th>
+                        <th>산단(본인)</th>
+                        <th>산단(가족)</th>
+                        <th>협력업체</th>
+                        <th>상담성향</th>
+                        <th>추가문의</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
+
+        <div class="admin-controls">
+            <button class="btn-back" onclick="toggleView('customer')">이전 화면</button>
+            <button class="btn-download" onclick="downloadCSV()">엑셀 다운로드</button>
+            <button class="btn-clear" onclick="clearData()">전체 초기화</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // 폼 제출 이벤트
+    document.getElementById('surveyForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // 다중 선택(체크박스) 데이터 수집 처리
+        const visitReasons = Array.from(document.querySelectorAll('input[name="q5"]:checked'))
+                                  .map(cb => cb.value)
+                                  .join(', ');
+
+        const result = {
+            q1: document.getElementById('q1').value,
+            q2: document.querySelector('input[name="q2"]:checked')?.value || '-',
+            q3: document.querySelector('input[name="q3"]:checked')?.value || '-',
+            q_family: document.querySelector('input[name="q_family"]:checked')?.value || '-',
+            q5: visitReasons || '선택안함',
+            q6: document.querySelector('input[name="q6"]:checked')?.value || '-',
+            q7: document.querySelector('input[name="q7"]:checked')?.value || '-',
+            q8: document.querySelector('input[name="q8"]:checked')?.value || '-',
+            q9: document.querySelector('input[name="q9"]:checked')?.value || '-',
+            q10: document.getElementById('q10').value || '-',
+            timestamp: new Date().toLocaleString()
+        };
+
+        // 로컬 스토리지에 저장 (기존 데이터와 충돌하지 않도록 키값 V2로 변경)
+        let savedData = JSON.parse(localStorage.getItem('uchepeDataV2')) || [];
+        savedData.push(result);
+        localStorage.setItem('uchepeDataV2', JSON.stringify(savedData));
+
+        alert("접수가 완료되었습니다! 담당 매니저가 내용을 확인하고 친절하게 안내해 드리겠습니다.");
+        this.reset(); 
+    });
+
+    // 화면 전환 함수
+    function toggleView(view) {
+        if(view === 'admin') {
+            document.getElementById('customerView').style.display = 'none';
+            document.getElementById('adminView').style.display = 'block';
+            loadData();
+            window.scrollTo(0,0); // 화면 최상단 이동
+        } else {
+            document.getElementById('adminView').style.display = 'none';
+            document.getElementById('customerView').style.display = 'block';
+        }
+    }
+
+    // 관리자 화면 표에 데이터 뿌리기
+    function loadData() {
+        const tbody = document.querySelector('#resultTable tbody');
+        tbody.innerHTML = ''; 
+        
+        const savedData = JSON.parse(localStorage.getItem('uchepeDataV2')) || [];
+
+        if(savedData.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="10" style="padding:30px; color:#777;">접수된 대기 고객이 없습니다.</td></tr>';
+            return;
+        }
+
+        // 최신 접수건이 가장 위로 오도록
+        savedData.slice().reverse().forEach(data => {
+            const tr = document.createElement('tr');
+            
+            // 산업단지 근무 관련 응답(핵심 타겟)인 경우 마젠타 핑크색으로 강조
+            const targetHighlight = (data.q6.includes('네') || data.q7.includes('네')) 
+                                    ? `<span class="highlight">O (대상자)</span>` 
+                                    : 'X';
+
+            tr.innerHTML = `
+                <td style="font-weight:bold;">${data.q1}</td>
+                <td>${data.q2}</td>
+                <td>${data.q3}</td>
+                <td>${data.q_family}</td>
+                <td style="font-size:11px; max-width:100px; white-space:normal;">${data.q5}</td>
+                <td>${data.q6}</td>
+                <td>${data.q7}</td>
+                <td>${data.q8}</td>
+                <td>${data.q9}</td>
+                <td style="font-size:11px; max-width:150px; overflow:hidden; text-overflow:ellipsis;" title="${data.q10}">${data.q10}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // 엑셀(CSV) 다운로드 함수
+    function downloadCSV() {
+        const savedData = JSON.parse(localStorage.getItem('uchepeDataV2')) || [];
+        if(savedData.length === 0) {
+            alert("다운로드할 데이터가 없습니다.");
+            return;
+        }
+
+        let csvContent = "\uFEFF";
+        // 헤더
+        csvContent += "접수일시,고객명(번호),현재 모바일,현재 인터넷/TV,가족 수,방문목적,본인 산단근무,가족 산단근무,협력업체여부,상담성향,추가문의\n";
+
+        savedData.forEach(data => {
+            // 줄바꿈이나 콤마가 포함될 수 있는 텍스트 처리
+            let safeQ10 = data.q10.replace(/"/g, '""').replace(/\n/g, ' ');
+
+            let row = [
+                `"${data.timestamp || ''}"`,
+                `"${data.q1}"`,
+                `"${data.q2}"`,
+                `"${data.q3}"`,
+                `"${data.q_family}"`,
+                `"${data.q5}"`,
+                `"${data.q6}"`,
+                `"${data.q7}"`,
+                `"${data.q8}"`,
+                `"${data.q9}"`,
+                `"${safeQ10}"`
+            ].join(",");
+            csvContent += row + "\n";
+        });
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        
+        const date = new Date();
+        const fileName = `유체페_상세상담내역_${date.getFullYear()}${String(date.getMonth()+1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}.csv`;
+
+        link.setAttribute("href", url);
+        link.setAttribute("download", fileName);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // 전체 데이터 삭제
+    function clearData() {
+        if(confirm("정말 모든 접수 내역을 삭제하시겠습니까? (삭제 전 엑셀 저장을 권장합니다!)")) {
+            localStorage.removeItem('uchepeDataV2');
+            loadData();
+            alert("전체 초기화 되었습니다.");
+        }
+    }
+</script>
+
+</body>
+</html>
