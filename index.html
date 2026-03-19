@@ -34,7 +34,7 @@
         /* 헤더 영역 */
         .header {
             text-align: center;
-            padding: 60px 20px 20px; /* 모바일에서 뒤로가기 버튼과 안 겹치도록 상단 여백 확대 */
+            padding: 60px 20px 20px;
             position: relative;
         }
         .header h1 { 
@@ -65,7 +65,7 @@
             cursor: pointer;
             text-decoration: underline;
             z-index: 10;
-            padding: 5px; /* 터치 영역 확보 */
+            padding: 5px; 
         }
 
         /* 혜택 강조 배너 (메뉴용) */
@@ -102,8 +102,8 @@
 
         /* 핑크색 안내 문구 박스 (문진표용) */
         .info-box {
-            background-color: #fff0f5; /* 연한 핑크 배경 */
-            border: 2px solid var(--uplus-pink); /* 핑크 테두리 */
+            background-color: #fff0f5;
+            border: 2px solid var(--uplus-pink); 
             border-radius: 12px;
             padding: 18px 15px;
             margin: 20px auto 0;
@@ -169,7 +169,10 @@
             font-size: 14px; 
             box-sizing: border-box;
             font-family: 'Noto Sans KR', sans-serif;
-            resize: vertical;
+        }
+        input[type="file"] {
+            font-size: 13px;
+            margin-bottom: 10px;
         }
         input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
             outline: none;
@@ -191,6 +194,7 @@
             transition: background-color 0.2s;
         }
         .submit-btn:hover { background-color: #cc006f; }
+        .submit-btn:disabled { background-color: #ccc; cursor: not-allowed; }
         .btn-secondary { background-color: #555; color: #fff; } 
         .btn-secondary:hover { background-color: #333; }
         
@@ -210,6 +214,7 @@
         .btn-back { background-color: #555; color: white; }
         .btn-download { background-color: #107c41; color: white; }
         .btn-clear { background-color: #e74c3c; color: white; }
+        .btn-settings { background-color: #2980b9; color: white; width: 100%; margin-bottom: 10px; }
 
         /* 공통 로고 스타일 */
         .top-logo {
@@ -220,13 +225,24 @@
             margin-bottom: 10px;
         }
 
-        /* 고정된 아이디 입력란 스타일 */
         .fixed-id {
             background-color: var(--uplus-gray);
             color: #555;
             font-weight: 700;
             text-align: center;
         }
+
+        /* 템플릿 설정 폼 스타일 */
+        .settings-group {
+            background-color: #fcfcfc;
+            border: 1px solid var(--uplus-border);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .settings-group h4 { margin: 0 0 15px 0; color: var(--uplus-pink); font-size: 15px; }
+        .settings-group label { background: none; border: none; padding: 0; margin-bottom: 5px; font-weight: bold; font-size: 13px; color: #555; display: block; }
+        .settings-group input[type="text"], .settings-group textarea { margin-bottom: 15px; }
     </style>
 </head>
 <body>
@@ -236,26 +252,35 @@
     <div id="menuView" style="padding: 40px 20px;">
         <div class="header" style="padding-top: 10px;">
             <div class="top-logo">U+</div>
-            <h1>유플러스 이벤트 진단</h1>
-            <p>현재 진행 중인 특별한 프로모션을 확인해보세요!</p>
+            <h1 id="disp_mainTitle">유플러스 이벤트 진단</h1>
+            <p id="disp_mainDesc">현재 진행 중인 특별한 프로모션을 확인해보세요!</p>
+        </div>
+
+        <div id="disp_bannerArea" style="display: none; margin-top: 10px; margin-bottom: 20px;">
+            <img id="disp_bannerImage" src="" alt="메인 이벤트 배너" style="width: 100%; border-radius: 12px; display: block; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
         </div>
         
         <div style="margin-top: 20px;">
             <div class="event-card">
-                <div class="badge">이벤트 1</div>
-                <h3>산업단지 기업체 임직원 프로모션</h3>
-                <p>청주 일반 산업단지, 테크노폴리스 산업단지 내에<br>기업체 근무하신다면 추가 140만원 할인 받기!</p>
+                <div class="badge" id="disp_event1Badge">이벤트 1</div>
+                <h3 id="disp_event1Title">산업단지 기업체 임직원 프로모션</h3>
+                <p id="disp_event1Desc">해당 기업체 근무하신다면 140만원 더! 할인 받기</p>
+                <div id="disp_event1Sub" style="font-size:13px; margin-top:10px; color:#666; white-space: pre-line;">
+충북 ▶ 일반 산업단지, 테크노폴리스 산업단지
+대전 ▶ 대덕 산업단지, 신탄진 한국타이어</div>
             </div>
             
             <div class="event-card">
-                <div class="badge" style="background-color: #8E44AD;">이벤트 2</div>
-                <h3>학원 특별 프로모션</h3>
-                <p>자녀, 본인, 학원 임직원 등<br>학원에 다니시는 분이 있다면?</p>
+                <div class="badge" id="disp_event2Badge" style="background-color: #8E44AD;">이벤트 2</div>
+                <h3 id="disp_event2Title">학원 특별 프로모션</h3>
+                <p id="disp_event2Desc">10만원 더! 할인받기</p>
+                <p id="disp_event2Sub" style="font-size:13px; margin-top:10px; color:#666; white-space: pre-line;">자녀, 본인, 학원 임직원 등 학원에 다니시는 분이 있다면?</p>
             </div>
         </div>
 
-        <div style="margin-top: 20px;">
-            <button class="submit-btn" onclick="switchView('surveyView')">이벤트 참여하기</button>
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 25px;">
+            <button class="submit-btn" id="disp_btn1Text" onclick="openSurvey('충북')">충북 이벤트 참여하기</button>
+            <button class="submit-btn" id="disp_btn2Text" style="background-color: #8E44AD;" onclick="openSurvey('대전')">대전 이벤트 참여하기</button>
         </div>
         
         <div class="admin-toggle" style="margin-top: 60px;">
@@ -267,7 +292,6 @@
         <div class="header">
             <button type="button" class="back-nav" onclick="goToMenu()">← 이전 메뉴로</button>
             <h1 style="color: var(--uplus-pink); font-size: 22px;">유플러스 매장에 오신 것을 환영합니다! 🥰</h1>
-            
             <div class="info-box">
                 <p>지금 매장에서는 추가 지원금 프로모션이 한창 진행 중입니다.<br><br><strong>딱 1분만 투자해서</strong> 아래 질문에 답해보세요.<br>나도 몰랐던 추가 지원금을 우리 플래너가 쏙쏙 찾아드립니다! 🎁</p>
             </div>
@@ -282,20 +306,16 @@
             <div class="question">
                 <h3>Q2. 📱 현재 고객님의 휴대폰 통신사는 어디이신가요?</h3>
                 <div class="radio-group">
-                    <label><input type="radio" name="q2" value="SKT" required> SKT</label>
-                    <label><input type="radio" name="q2" value="KT"> KT</label>
-                    <label><input type="radio" name="q2" value="알뜰폰"> 알뜰폰</label>
-                    <label><input type="radio" name="q2" value="LG U+"> LG U+ (기기변경/가족결합 혜택을 찾아드릴게요!)</label>
+                    <label><input type="radio" name="q2" value="LG U+" required> LG U+ (기기변경/가족결합 혜택을 찾아드릴게요!)</label>
+                    <label><input type="radio" name="q2" value="타사(SK,KT,알뜰폰)"> 타사(SK,KT,알뜰폰)</label>
                 </div>
             </div>
             
             <div class="question">
                 <h3>Q3. 📺 댁에서 이용 중이신 인터넷/TV 통신사는 어디이신가요?</h3>
                 <div class="radio-group">
-                    <label><input type="radio" name="q3" value="SKT" required> SKT (SK브로드밴드)</label>
-                    <label><input type="radio" name="q3" value="KT"> KT</label>
-                    <label><input type="radio" name="q3" value="지역케이블"> 지역 케이블 (HCN 등)</label>
-                    <label><input type="radio" name="q3" value="LG U+"> LG U+</label>
+                    <label><input type="radio" name="q3" value="LG U+" required> LG U+</label>
+                    <label><input type="radio" name="q3" value="타사(SK,KT,지역케이블)"> 타사(SK,KT,지역케이블)</label>
                     <label><input type="radio" name="q3" value="미사용"> 인터넷/TV를 사용하지 않음</label>
                 </div>
             </div>
@@ -311,56 +331,61 @@
                     <label><input type="radio" name="q4" value="5인 이상"> 5인 이상</label>
                 </div>
             </div>
-            
-            <div class="question">
-                <h3>Q5. ✨ 오늘 매장에는 어떤 설레는 일로 방문해주셨나요? (중복선택 가능)</h3>
-                <div class="radio-group">
-                    <label><input type="checkbox" name="q5" value="휴대폰 변경"> 최신 휴대폰으로 바꾸고 싶어서📱</label>
-                    <label><input type="checkbox" name="q5" value="인터넷/TV 변경"> 우리 집 인터넷/TV를 바꿔볼까 하고📺</label>
-                    <label><input type="checkbox" name="q5" value="업무처리"> 요금제 변경이나 기타 업무 처리하러</label>
-                    <label><input type="checkbox" name="q5" value="단순구경"> 지나가다 혜택이 궁금해서 구경하러👀</label>
+
+            <div id="chungbukQuestions" style="display: none;">
+                <div class="question">
+                    <h3>Q5. 🚨 [핵심진단] "청주 일반 산업단지", "테크노폴리스 산업단지" 에 있는 기업에 근무하시나요?</h3>
+                    <div class="radio-group">
+                        <label><input type="radio" name="q5" value="본인 근무" required> 1. 네, 해당 지역에서 일하고 있습니다. 💼</label>
+                        <label><input type="radio" name="q5" value="가족 근무"> 2. 가족중에 해당 지역에서 일하고 있는 사람이 있습니다. 👨‍👩‍👦</label>
+                        <label><input type="radio" name="q5" value="해당 없음"> 3. 아니요 다른 지역에서 일합니다.</label>
+                        <label><input type="radio" name="q5" value="확인 필요"> 4. 이벤트에 해당이 되는지 확인해주세요.</label>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="question">
-                <h3>Q6. 🚨 [핵심진단] "청주 일반 산업단지", "테크노폴리스 산업단지" 에 있는 기업에 근무하시나요?</h3>
-                <div class="radio-group">
-                    <label><input type="radio" name="q6" value="본인 근무" required> 1. 네, 해당 지역에서 일하고 있습니다. 💼</label>
-                    <label><input type="radio" name="q6" value="가족 근무"> 2. 가족중에 해당 지역에서 일하고 있는 사람이 있습니다. 👨‍👩‍👦</label>
-                    <label><input type="radio" name="q6" value="해당 없음"> 3. 아니요 다른 지역에서 일합니다.</label>
-                    <label><input type="radio" name="q6" value="확인 필요"> 4. 이벤트에 해당이 되는지 확인해주세요. (플래너가 주소로 확인해 드릴게요!)</label>
+                <div class="question">
+                    <h3>Q6. 🏫 현재 다니고 계신(또는 자녀가 다니는) 학원이 아래 상가 중 한 곳에 위치해 있나요?</h3>
+                    <div class="radio-group">
+                        <label><input type="radio" name="q6" value="청주 복대동 지웰시티몰 1차" required> 청주 복대동 지웰시티몰 1차 (복대동 3379)</label>
+                        <label><input type="radio" name="q6" value="청주 복대동 테라스퀘어"> 청주 복대동 테라스퀘어 (복대동 288-6)</label>
+                        <label><input type="radio" name="q6" value="청주 용암동 에듀타워"> 청주 용암동 에듀타워 (용암동 307)</label>
+                        <label><input type="radio" name="q6" value="청주 가경동 메리맘스"> 청주 가경동 메리맘스 (가경동 2270)</label>
+                        <label><input type="radio" name="q6" value="청주 주성동 센타프라자"> 청주 주성동 센타프라자 (주성동 340)</label>
+                        <label><input type="radio" name="q6" value="충주 호암동 골드테라스"> 충주 호암동 골드테라스 (호암동 996)</label>
+                        <label><input type="radio" name="q6" value="충주 호암동 지음프라자"> 충주 호암동 지음프라자 (호암동 1026)</label>
+                        <label><input type="radio" name="q6" value="기타"> 위 목록에 없지만 학원에 다니고 있음</label>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="question">
-                <h3>Q7. 🏫 현재 다니고 계신(또는 자녀가 다니는) 학원이 아래 상가 중 한 곳에 위치해 있나요?</h3>
-                <div class="radio-group">
-                    <label><input type="radio" name="aq4" value="청주 복대동 지웰시티몰 1차"> 청주 복대동 지웰시티몰 1차 (복대동 3379)</label>
-                    <label><input type="radio" name="aq4" value="청주 복대동 테라스퀘어"> 청주 복대동 테라스퀘어 (복대동 288-6)</label>
-                    <label><input type="radio" name="aq4" value="청주 용암동 에듀타워"> 청주 용암동 에듀타워 (용암동 307)</label>
-                    <label><input type="radio" name="aq4" value="청주 가경동 메리맘스"> 청주 가경동 메리맘스 (가경동 2270)</label>
-                    <label><input type="radio" name="aq4" value="청주 주성동 센타프라자"> 청주 주성동 센타프라자 (주성동 340)</label>
-                    <label><input type="radio" name="aq4" value="충주 호암동 골드테라스"> 충주 호암동 골드테라스 (호암동 996)</label>
-                    <label><input type="radio" name="aq4" value="충주 호암동 지음프라자"> 충주 호암동 지음프라자 (호암동 1026)</label>
-                    <label><input type="radio" name="q7" value="기타"> 위 목록에 없지만 학원에 다니고 있음</label>
-                </div>
-            </div>
-            
-            <div class="question">
-                <h3>Q8. 🎯 오늘 담당 플래너에게 어떤 스타일의 상담을 받고 싶으신가요?</h3>
-                <div class="radio-group">
-                    <label><input type="radio" name="q8" value="스피드" required> 핵심만 콕콕! 결론부터 말해주는 '스피드 상담' ⚡</label>
-                    <label><input type="radio" name="q8" value="꼼꼼분석"> 요금제 하나하나 비교해 주는 '꼼꼼 분석 상담' 🧐</label>
-                    <label><input type="radio" name="q8" value="풀케어"> 위약금부터 결합할인까지 전부 알아서 해주는 '풀케어 컨설팅' 👑</label>
-                </div>
-            </div>
-            
-            <div class="question">
-                <h3>Q9. 💬 마지막으로, 상담 전 플래너가 미리 알아두면 좋은 점이나 궁금한 점을 자유롭게 적어주세요.</h3>
-                <textarea id="q9" rows="3" placeholder="궁금한 점을 자유롭게 적어주세요! 😊"></textarea>
             </div>
 
-            <button type="submit" class="submit-btn">할인 혜택 확인하기</button>
+            <div id="daejeonQuestions" style="display: none;">
+                <div class="question">
+                    <h3>Q5. 🚨 [핵심진단] "대덕 산업단지", "신탄진 한국타이어" 에 있는 기업에 근무하시나요?</h3>
+                    <div class="radio-group">
+                        <label><input type="radio" name="q5" value="본인 근무" required> 1. 네, 해당 지역에서 일하고 있습니다. 💼</label>
+                        <label><input type="radio" name="q5" value="가족 근무"> 2. 가족중에 해당 지역에서 일하고 있는 사람이 있습니다. 👨‍👩‍👦</label>
+                        <label><input type="radio" name="q5" value="해당 없음"> 3. 아니요 다른 지역에서 일합니다.</label>
+                        <label><input type="radio" name="q5" value="확인 필요"> 4. 이벤트에 해당이 되는지 확인해주세요.</label>
+                    </div>
+                </div>
+                <div class="question">
+                    <h3>Q6. 🏫 현재 다니고 계신(또는 자녀가 다니는) 학원이 아래 상가 중 한 곳에 위치해 있나요?</h3>
+                    <div class="radio-group">
+                        <label><input type="radio" name="q6" value="대전 가오동 수성프라자" required> 대전 가오동 수성프라자 (가오동 667)</label>
+                        <label><input type="radio" name="q6" value="대전 반석동 웰빙타운"> 대전 반석동 웰빙타운 (반석동 639-4)</label>
+                        <label><input type="radio" name="q6" value="대전 관저동 비전9빌딩"> 대전 관저동 비전9빌딩 (관저동 1989)</label>
+                        <label><input type="radio" name="q6" value="대전 상대동 도안드림빌딩"> 대전 상대동 도안드림빌딩 (상대동 455-2)</label>
+                        <label><input type="radio" name="q6" value="대전 만년동 만년코아"> 대전 만년동 만년코아 (만년동 266)</label>
+                        <label><input type="radio" name="q6" value="대전 관저동 빌리온2빌딩"> 대전 관저동 빌리온2빌딩 (관저동 1540)</label>
+                        <label><input type="radio" name="q6" value="대전 월평동 황실코아"> 대전 월평동 황실코아 (월평동 302)</label>
+                        <label><input type="radio" name="q6" value="세종 보람동 스마트허브"> 세종 보람동 스마트허브 (보람동 722)</label>
+                        <label><input type="radio" name="q6" value="세종 새롬동 해피라움W"> 세종 새롬동 해피라움W (새롬동 579)</label>
+                        <label><input type="radio" name="q6" value="세종 나성동 에스제이타워"> 세종 나성동 에스제이타워 (나성동 746)</label>
+                        <label><input type="radio" name="q6" value="기타"> 위 목록에 없지만 학원에 다니고 있음</label>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" id="submitBtn" class="submit-btn">할인 혜택 확인하기</button>
             <button type="button" class="submit-btn btn-secondary" onclick="goToMenu()">처음 메뉴로 돌아가기</button>
         </form>
 
@@ -370,7 +395,8 @@
     </div>
 
     <div id="adminLoginView" style="display: none;">
-        <div class="header" style="padding-top: 60px;"> <button type="button" class="back-nav" onclick="cancelAdminLogin()">← 이전 메뉴로</button>
+        <div class="header" style="padding-top: 60px;"> 
+            <button type="button" class="back-nav" onclick="cancelAdminLogin()">← 이전 메뉴로</button>
             <div class="top-logo">플래너 모드</div>
             <h1>플래너 전용 로그인</h1>
             <p>고객 접수 내역을 보시려면 비밀번호를 입력해주세요.</p>
@@ -390,29 +416,31 @@
     </div>
 
     <div id="adminView" style="display: none;">
-        <div class="header" style="padding-top: 60px;"> <button type="button" class="back-nav" onclick="goToMenu()">← 이전 메뉴로</button>
+        <div class="header" style="padding-top: 60px; padding-bottom: 10px;"> 
+            <button type="button" class="back-nav" onclick="goToMenu()">← 이전 메뉴로</button>
             <h1 style="margin-bottom: 0;">통합 이벤트 접수 현황</h1>
         </div>
         
         <div style="padding: 0 20px 20px;">
+            <button class="btn-settings submit-btn" onclick="showAdminSettings()">⚙️ 페이지 템플릿 문구 설정하기</button>
+            
             <div class="table-container">
                 <table id="resultTable">
                     <thead>
                         <tr>
+                            <th>지역</th>
                             <th>접수일시</th>
                             <th>고객명</th>
                             <th>통신사</th>
                             <th>인터넷/TV</th>
                             <th>가족수</th>
-                            <th>방문목적</th>
                             <th>산단근무(핵심)</th>
                             <th>학원위치(핵심)</th>
-                            <th>상담성향</th>
-                            <th>남긴말씀</th>
+                            <th>접수위치(GPS)</th> 
                         </tr>
                     </thead>
                     <tbody id="tableBody">
-                        </tbody>
+                    </tbody>
                 </table>
             </div>
 
@@ -424,45 +452,263 @@
         </div>
     </div>
 
+    <div id="adminSettingsView" style="display: none;">
+        <div class="header" style="padding-top: 60px; padding-bottom: 10px;"> 
+            <button type="button" class="back-nav" onclick="switchView('adminView')">← 데이터 화면으로</button>
+            <h1 style="margin-bottom: 0;">페이지 템플릿 설정</h1>
+            <p style="margin-top: 10px;">메인 화면에 노출될 배너 이미지와 문구를 자유롭게 변경하세요.</p>
+        </div>
+        
+        <form id="settingsForm">
+            <div class="settings-group">
+                <h4>상단 배너 이미지 설정</h4>
+                <label>배너 이미지 업로드 (권장: 가로가 넓고 용량이 작은 이미지)</label>
+                <input type="file" id="set_bannerImage" accept="image/*" onchange="previewBanner(event)">
+                <img id="preview_banner" src="" style="width: 100%; border-radius: 8px; margin-top: 10px; display: none;">
+                <button type="button" class="btn-secondary" style="padding: 8px 12px; font-size: 13px; margin-top: 10px; border: none; border-radius: 6px; cursor: pointer;" onclick="clearBanner()">이미지 삭제</button>
+                <input type="hidden" id="hidden_bannerBase64" value="">
+            </div>
+
+            <div class="settings-group">
+                <h4>메인 타이틀 설정</h4>
+                <label>메인 제목</label>
+                <input type="text" id="set_mainTitle" required>
+                <label>메인 서브 설명</label>
+                <input type="text" id="set_mainDesc" required>
+            </div>
+
+            <div class="settings-group">
+                <h4>이벤트 1 (상단 배너) 설정</h4>
+                <label>뱃지 텍스트 (예: 이벤트 1)</label>
+                <input type="text" id="set_event1Badge" required>
+                <label>이벤트 제목</label>
+                <input type="text" id="set_event1Title" required>
+                <label>이벤트 메인 설명</label>
+                <input type="text" id="set_event1Desc" required>
+                <label>이벤트 상세 설명 (줄바꿈 가능)</label>
+                <textarea id="set_event1Sub" rows="3"></textarea>
+                <label>버튼 텍스트</label>
+                <input type="text" id="set_btn1Text" required>
+            </div>
+
+            <div class="settings-group">
+                <h4>이벤트 2 (하단 배너) 설정</h4>
+                <label>뱃지 텍스트</label>
+                <input type="text" id="set_event2Badge" required>
+                <label>이벤트 제목</label>
+                <input type="text" id="set_event2Title" required>
+                <label>이벤트 메인 설명</label>
+                <input type="text" id="set_event2Desc" required>
+                <label>이벤트 상세 설명 (줄바꿈 가능)</label>
+                <textarea id="set_event2Sub" rows="2"></textarea>
+                <label>버튼 텍스트</label>
+                <input type="text" id="set_btn2Text" required>
+            </div>
+
+            <button type="button" class="submit-btn" onclick="saveSettings()">템플릿 저장 및 적용하기</button>
+            <button type="button" class="submit-btn btn-secondary" onclick="switchView('adminView')">취소</button>
+        </form>
+    </div>
+
 </div>
 
 <script>
-    // 화면별 ID 모음
+    // 화면별 ID 모음 
     const views = {
         menu: document.getElementById('menuView'),
         surveyView: document.getElementById('surveyView'),
         adminLogin: document.getElementById('adminLoginView'),
-        admin: document.getElementById('adminView')
+        admin: document.getElementById('adminView'),
+        adminSettings: document.getElementById('adminSettingsView')
     };
 
-    // 공통 화면 전환 함수
+    let selectedRegion = ''; 
+
+    // --- 템플릿 설정 관련 로직 시작 ---
+    // 기본 템플릿 데이터
+    const defaultSettings = {
+        bannerImage: "", // 배너 이미지 Base64 초기값
+        mainTitle: "유플러스 이벤트 진단",
+        mainDesc: "현재 진행 중인 특별한 프로모션을 확인해보세요!",
+        event1Badge: "이벤트 1",
+        event1Title: "산업단지 기업체 임직원 프로모션",
+        event1Desc: "해당 기업체 근무하신다면 140만원 더! 할인 받기",
+        event1Sub: "충북 ▶ 일반 산업단지, 테크노폴리스 산업단지\n대전 ▶ 대덕 산업단지, 신탄진 한국타이어",
+        btn1Text: "충북 이벤트 참여하기",
+        event2Badge: "이벤트 2",
+        event2Title: "학원 특별 프로모션",
+        event2Desc: "10만원 더! 할인받기",
+        event2Sub: "자녀, 본인, 학원 임직원 등 학원에 다니시는 분이 있다면?",
+        btn2Text: "대전 이벤트 참여하기"
+    };
+
+    // 설정값 불러와서 화면 및 폼에 적용
+    function loadAndApplySettings() {
+        const savedSettings = JSON.parse(localStorage.getItem('uplusTemplateSettings')) || defaultSettings;
+        
+        // 0. 배너 이미지 처리
+        const bannerImgBase64 = savedSettings.bannerImage || "";
+        const dispBannerArea = document.getElementById('disp_bannerArea');
+        const dispBannerImage = document.getElementById('disp_bannerImage');
+        const hiddenBannerBase64 = document.getElementById('hidden_bannerBase64');
+        const previewBannerImg = document.getElementById('preview_banner');
+
+        if (bannerImgBase64) {
+            dispBannerArea.style.display = 'block';
+            dispBannerImage.src = bannerImgBase64;
+            
+            hiddenBannerBase64.value = bannerImgBase64;
+            previewBannerImg.src = bannerImgBase64;
+            previewBannerImg.style.display = 'block';
+        } else {
+            dispBannerArea.style.display = 'none';
+            dispBannerImage.src = '';
+            
+            hiddenBannerBase64.value = '';
+            previewBannerImg.src = '';
+            previewBannerImg.style.display = 'none';
+        }
+
+        // 1. 메인 메뉴 화면 DOM 업데이트
+        document.getElementById('disp_mainTitle').innerText = savedSettings.mainTitle;
+        document.getElementById('disp_mainDesc').innerText = savedSettings.mainDesc;
+        
+        document.getElementById('disp_event1Badge').innerText = savedSettings.event1Badge;
+        document.getElementById('disp_event1Title').innerText = savedSettings.event1Title;
+        document.getElementById('disp_event1Desc').innerText = savedSettings.event1Desc;
+        document.getElementById('disp_event1Sub').innerText = savedSettings.event1Sub;
+        document.getElementById('disp_btn1Text').innerText = savedSettings.btn1Text;
+
+        document.getElementById('disp_event2Badge').innerText = savedSettings.event2Badge;
+        document.getElementById('disp_event2Title').innerText = savedSettings.event2Title;
+        document.getElementById('disp_event2Desc').innerText = savedSettings.event2Desc;
+        document.getElementById('disp_event2Sub').innerText = savedSettings.event2Sub;
+        document.getElementById('disp_btn2Text').innerText = savedSettings.btn2Text;
+
+        // 2. 관리자 설정 폼 Input 업데이트
+        document.getElementById('set_mainTitle').value = savedSettings.mainTitle;
+        document.getElementById('set_mainDesc').value = savedSettings.mainDesc;
+        
+        document.getElementById('set_event1Badge').value = savedSettings.event1Badge;
+        document.getElementById('set_event1Title').value = savedSettings.event1Title;
+        document.getElementById('set_event1Desc').value = savedSettings.event1Desc;
+        document.getElementById('set_event1Sub').value = savedSettings.event1Sub;
+        document.getElementById('set_btn1Text').value = savedSettings.btn1Text;
+
+        document.getElementById('set_event2Badge').value = savedSettings.event2Badge;
+        document.getElementById('set_event2Title').value = savedSettings.event2Title;
+        document.getElementById('set_event2Desc').value = savedSettings.event2Desc;
+        document.getElementById('set_event2Sub').value = savedSettings.event2Sub;
+        document.getElementById('set_btn2Text').value = savedSettings.btn2Text;
+    }
+
+    // 파일 선택 시 이미지 미리보기 및 Base64 인코딩
+    function previewBanner(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64String = e.target.result;
+                document.getElementById('preview_banner').src = base64String;
+                document.getElementById('preview_banner').style.display = 'block';
+                document.getElementById('hidden_bannerBase64').value = base64String;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // 설정창에서 업로드한 이미지 삭제
+    function clearBanner() {
+        document.getElementById('set_bannerImage').value = '';
+        document.getElementById('preview_banner').src = '';
+        document.getElementById('preview_banner').style.display = 'none';
+        document.getElementById('hidden_bannerBase64').value = '';
+    }
+
+    // 설정값 저장
+    function saveSettings() {
+        const newSettings = {
+            bannerImage: document.getElementById('hidden_bannerBase64').value,
+            mainTitle: document.getElementById('set_mainTitle').value,
+            mainDesc: document.getElementById('set_mainDesc').value,
+            event1Badge: document.getElementById('set_event1Badge').value,
+            event1Title: document.getElementById('set_event1Title').value,
+            event1Desc: document.getElementById('set_event1Desc').value,
+            event1Sub: document.getElementById('set_event1Sub').value,
+            btn1Text: document.getElementById('set_btn1Text').value,
+            event2Badge: document.getElementById('set_event2Badge').value,
+            event2Title: document.getElementById('set_event2Title').value,
+            event2Desc: document.getElementById('set_event2Desc').value,
+            event2Sub: document.getElementById('set_event2Sub').value,
+            btn2Text: document.getElementById('set_btn2Text').value
+        };
+        
+        try {
+            localStorage.setItem('uplusTemplateSettings', JSON.stringify(newSettings));
+            loadAndApplySettings(); // 변경 즉시 메인 화면 적용
+            alert("템플릿 설정이 성공적으로 저장되었습니다.");
+            switchView('admin'); // 다시 관리자 메인으로 이동
+        } catch (e) {
+            // 로컬스토리지 용량 초과 에러 방지 (보통 사진이 너무 클 때 발생)
+            if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
+                alert("이미지 용량이 너무 커서 저장할 수 없습니다. 용량이 작은 이미지로 변경해주세요.");
+            } else {
+                alert("저장 중 오류가 발생했습니다.");
+            }
+        }
+    }
+
+    // 초기 실행 (페이지 로드 시 설정 불러오기)
+    document.addEventListener("DOMContentLoaded", function() {
+        loadAndApplySettings();
+    });
+    // --- 템플릿 설정 관련 로직 끝 ---
+
+
+    // 화면 전환 함수
     function switchView(targetView) {
         Object.values(views).forEach(v => v.style.display = 'none');
         views[targetView].style.display = 'block';
         window.scrollTo(0,0);
     }
 
-    // 처음 메뉴로 돌아가기
     function goToMenu() {
         switchView('menu');
+        document.getElementById('integratedForm').reset();
     }
 
-    // 플래너 페이지 진입 (로그인 화면 띄우기)
-    function showAdminLogin() {
-        switchView('adminLogin');
+    // 지역별 이벤트 참여 버튼 클릭 시
+    function openSurvey(region) {
+        selectedRegion = region; // 충북 or 대전 저장
+
+        const cbDiv = document.getElementById('chungbukQuestions');
+        const djDiv = document.getElementById('daejeonQuestions');
+
+        // 선택되지 않은 지역의 질문을 숨기고, input을 disabled 처리하여 제출 시 겹치지 않게 함
+        if(region === '충북') {
+            cbDiv.style.display = 'block';
+            djDiv.style.display = 'none';
+            cbDiv.querySelectorAll('input').forEach(el => el.disabled = false);
+            djDiv.querySelectorAll('input').forEach(el => el.disabled = true);
+        } else {
+            cbDiv.style.display = 'none';
+            djDiv.style.display = 'block';
+            cbDiv.querySelectorAll('input').forEach(el => el.disabled = true);
+            djDiv.querySelectorAll('input').forEach(el => el.disabled = false);
+        }
+
+        switchView('surveyView');
     }
 
-    // 플래너 로그인 취소
-    function cancelAdminLogin() {
-        document.getElementById('loginPw').value = ''; 
-        switchView('menu');
-    }
+    // 플래너 로그인 및 뷰 제어
+    function showAdminLogin() { switchView('adminLogin'); }
+    function cancelAdminLogin() { document.getElementById('loginPw').value = ''; switchView('menu'); }
+    function showAdminSettings() { switchView('adminSettings'); }
 
-    // --- 플래너 로그인 로직 ---
     document.getElementById('loginForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const pwInput = document.getElementById('loginPw').value;
-        if (pwInput === 'ureem2012') { // 기존 비밀번호 유지
+        if (pwInput === 'ureem2012') { 
             document.getElementById('loginPw').value = ''; 
             switchView('admin');
             loadAdminData(); 
@@ -471,78 +717,118 @@
         }
     });
 
-    // --- 통합 설문 제출 로직 ---
+    // --- 폼 제출 및 GPS 로직 ---
     document.getElementById('integratedForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
-        const visitReasons = Array.from(document.querySelectorAll('input[name="q5"]:checked')).map(cb => cb.value).join(', ');
-        
-        const result = {
-            q1: document.getElementById('q1').value,
-            q2: document.querySelector('input[name="q2"]:checked')?.value || '-',
-            q3: document.querySelector('input[name="q3"]:checked')?.value || '-',
-            q4: document.querySelector('input[name="q4"]:checked')?.value || '-',
-            q5: visitReasons || '선택안함',
-            q6: document.querySelector('input[name="q6"]:checked')?.value || '-',
-            q7: document.querySelector('input[name="q7"]:checked')?.value || '-',
-            q8: document.querySelector('input[name="q8"]:checked')?.value || '-',
-            q9: document.getElementById('q9').value || '-',
-            timestamp: new Date().toLocaleString()
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true; // 중복 제출 방지
+        submitBtn.innerText = "위치 확인 및 접수 중...";
+
+        // disabled 되지 않은(현재 보이는 화면의) 라디오 버튼 값만 가져옵니다.
+        const q5_val = document.querySelector('input[name="q5"]:not([disabled]):checked')?.value || '-';
+        const q6_val = document.querySelector('input[name="q6"]:not([disabled]):checked')?.value || '-';
+
+        // 데이터를 저장하는 내부 함수
+        const saveData = (locationStr) => {
+            const result = {
+                region: selectedRegion, // 충북 또는 대전
+                q1: document.getElementById('q1').value,
+                q2: document.querySelector('input[name="q2"]:checked')?.value || '-',
+                q3: document.querySelector('input[name="q3"]:checked')?.value || '-',
+                q4: document.querySelector('input[name="q4"]:checked')?.value || '-',
+                q5: q5_val,
+                q6: q6_val,
+                location: locationStr, // 수집된 위치 데이터 삽입
+                timestamp: new Date().toLocaleString()
+            };
+            
+            // 새 데이터 포맷을 위해 V2로 변경
+            let savedData = JSON.parse(localStorage.getItem('regionEventDataV2')) || [];
+            savedData.push(result);
+            localStorage.setItem('regionEventDataV2', JSON.stringify(savedData));
+            
+            alert(`[${selectedRegion} 지역] 이벤트 접수가 완료되었습니다! 🎉\n담당 플래너가 혜택을 확인하고 안내해 드리겠습니다.`);
+            
+            document.getElementById('integratedForm').reset();
+            submitBtn.disabled = false;
+            submitBtn.innerText = "할인 혜택 확인하기";
+            switchView('menu'); 
         };
-        
-        let savedData = JSON.parse(localStorage.getItem('integratedEventDataV1')) || [];
-        savedData.push(result);
-        localStorage.setItem('integratedEventDataV1', JSON.stringify(savedData));
-        
-        alert("접수가 완료되었습니다! 🎉 담당 플래너가 내용을 꼼꼼히 확인하고 친절하게 안내해 드리겠습니다.");
-        this.reset(); 
-        switchView('menu'); 
+
+        // GPS 위치 가져오기 시도
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const lat = position.coords.latitude.toFixed(5);
+                    const lng = position.coords.longitude.toFixed(5);
+                    saveData(`${lat}, ${lng}`);
+                },
+                function(error) {
+                    saveData("위치 확인 불가(권한거부)");
+                },
+                { timeout: 5000 } // 5초 시간 제한
+            );
+        } else {
+            saveData("GPS 지원하지 않음");
+        }
     });
 
-    // --- 관리자 데이터 불러오기 ---
+    // --- 관리자 데이터 표 그리기 ---
     function loadAdminData() {
         const tbody = document.getElementById('tableBody');
         tbody.innerHTML = ''; 
 
-        const data = JSON.parse(localStorage.getItem('integratedEventDataV1')) || [];
+        const data = JSON.parse(localStorage.getItem('regionEventDataV2')) || [];
         
         if(data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="10" style="padding:30px; color:#777;">아직 접수된 고객 내역이 없습니다.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="9" style="padding:30px; color:#777;">아직 접수된 고객 내역이 없습니다.</td></tr>';
             return;
         }
         
         data.slice().reverse().forEach(row => {
             const tr = document.createElement('tr');
+            
+            // 지역에 따라 색상 뱃지 다르게 표시
+            const regionBadge = row.region === '충북' 
+                ? `<span style="background:var(--uplus-pink); color:white; padding:3px 8px; border-radius:10px;">충북</span>`
+                : `<span style="background:#8E44AD; color:white; padding:3px 8px; border-radius:10px;">대전</span>`;
+
+            // 좌표인 경우 구글맵 링크 생성
+            let locDisplay = row.location || '-';
+            if(locDisplay.includes(',')) {
+                const coords = row.location.replace(/ /g, '');
+                locDisplay = `<a href="http://googleusercontent.com/maps.google.com/?q=${coords}" target="_blank" style="color:var(--uplus-pink); text-decoration:underline; font-weight:bold;">지도보기</a><br><span style="font-size:10px; color:#888;">(${row.location})</span>`;
+            }
+
             tr.innerHTML = `
+                <td>${regionBadge}</td>
                 <td style="font-size:11px;">${row.timestamp}</td>
                 <td style="font-weight:bold; color:var(--uplus-pink);">${row.q1}</td>
                 <td>${row.q2}</td>
                 <td>${row.q3}</td>
                 <td>${row.q4}</td>
-                <td style="font-size:11px; white-space:normal; min-width:80px;">${row.q5}</td>
-                <td style="font-weight:bold;">${row.q6}</td>
-                <td style="font-size:11px; white-space:normal; min-width:120px;">${row.q7}</td>
-                <td>${row.q8}</td>
-                <td style="font-size:11px; max-width:150px; overflow:hidden; text-overflow:ellipsis;" title="${row.q9}">${row.q9}</td>
+                <td style="font-weight:bold;">${row.q5}</td>
+                <td style="font-size:11px; white-space:normal; min-width:120px;">${row.q6}</td>
+                <td style="font-size:12px; font-weight:bold;">${locDisplay}</td>
             `;
             tbody.appendChild(tr);
         });
     }
 
-    // 엑셀(CSV) 다운로드
+    // --- 엑셀 다운로드 ---
     function downloadCSV() {
-        const savedData = JSON.parse(localStorage.getItem('integratedEventDataV1')) || [];
+        const savedData = JSON.parse(localStorage.getItem('regionEventDataV2')) || [];
         if(savedData.length === 0) {
             alert("다운로드할 데이터가 없습니다.");
             return;
         }
 
         let csvContent = "\uFEFF"; // 한글 깨짐 방지
-        csvContent += "접수일시,고객명,현재 모바일,인터넷/TV,가족 수,방문목적,산단근무여부,학원위치,상담성향,남긴말씀\n";
+        csvContent += "지역,접수일시,고객명,현재 모바일,인터넷/TV,가족 수,산단근무여부,학원위치,접수위치(GPS)\n";
         
         savedData.forEach(d => {
-            let safeQ9 = d.q9.replace(/"/g, '""').replace(/\n/g, ' ');
-            csvContent += `"${d.timestamp}","${d.q1}","${d.q2}","${d.q3}","${d.q4}","${d.q5}","${d.q6}","${d.q7}","${d.q8}","${safeQ9}"\n`;
+            csvContent += `"${d.region}","${d.timestamp}","${d.q1}","${d.q2}","${d.q3}","${d.q4}","${d.q5}","${d.q6}","${d.location || '-'}"\n`;
         });
 
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -559,14 +845,15 @@
         document.body.removeChild(link);
     }
 
-    // 전체 데이터 삭제
+    // --- 초기화 ---
     function clearData() {
         if(confirm("정말 모든 접수 내역을 삭제하시겠습니까? (삭제 전 엑셀 저장을 권장합니다)")) {
-            localStorage.removeItem('integratedEventDataV1');
+            localStorage.removeItem('regionEventDataV2');
             loadAdminData();
             alert("전체 내역이 초기화 되었습니다.");
         }
     }
+
 </script>
 
 </body>
